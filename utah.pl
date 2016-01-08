@@ -24,20 +24,20 @@ sub said
     my ($self, $message) = @_;
     print "Message from $message->{'who'}: $message->{'body'}\n";
     if ($message->{'address'}) {
-	my $msg = lc($message->{'body'});
+	my $msg = $message->{'body'};
 	chomp($msg);
-	if ($msg eq "quit") {
+	if (lc($msg) eq "quit") {
 	    $self->shutdown( "kbai");
 	}
-	elsif ($msg =~ /^report to #(\S+)/) {
+	elsif ($msg =~ /^report to #(\S+)/i) {
 	    $config->{reportChans}->{$1} = 1;
 	    saveConfig();
 	}
-	elsif ($msg =~ /^(no|do not) report to #(\S+)/) {
+	elsif ($msg =~ /^(no|do not) report to #(\S+)/i) {
 	    $config->{reportChans}->{$2} = 0;
 	    saveConfig();
 	}
-	elsif ($msg =~ /^cancel/) {
+	elsif ($msg =~ /^cancel/i) {
 	    @teas = ();
 	    return "OK, I have cancelled all tea notifications.";
 	}
@@ -86,7 +86,8 @@ sub tick
 	if($res < 1) {
 	    while (my ($k,$v)  = each $config->{reportChans}) {
 		if($v == 1) {
-		    $self->say(channel => "#$k", body=>"$t->[1] now ready in $t->[2]. Thanks $t->[3]!");
+		    my $tea = ucfirst($t->[1]);
+		    $self->say(channel => "#$k", body=>"$tea now ready in $t->[2]. Thanks $t->[3]!");
 		}
 	    }
 	} else {
@@ -122,7 +123,7 @@ while (my ($k,$v)  = each $config->{reportChans}) {
 my $bot = TeaBot->new(
     server => "irc0.codethink.co.uk",
     channels => \@chans,
-    nick      => "utah",
+    nick      => "utahtest",
     username  => $config->{username},
     password => $config->{password},
     name      => "Utah Teabot",
