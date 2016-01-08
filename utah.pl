@@ -65,6 +65,10 @@ sub said
 	    print "$tea ready in $delay minutes in $location\n";
 	    my $dt = DateTime->now;
 	    $dt->add(minutes=>$delay);
+	    chomp($tea);
+	    if($tea =~ /^AF$/i || $tea =~ /arctic fire/i) {
+		$tea = "nasty fruit tea";
+	    }
 	    push @teas, [$dt ,$tea, $location, $brewer];
 	    return "OK";
 	}
@@ -123,7 +127,7 @@ while (my ($k,$v)  = each $config->{reportChans}) {
 my $bot = TeaBot->new(
     server => "irc0.codethink.co.uk",
     channels => \@chans,
-    nick      => "utah",
+    nick      => $config->{nick},
     username  => $config->{username},
     password => $config->{password},
     name      => "Utah Teabot",
