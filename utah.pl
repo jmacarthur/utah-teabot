@@ -52,7 +52,7 @@ sub said
 		if($f =~ /(\d+)\s*(m|min|mins)/i) {
 		    $delay = $1;
 		}
-		elsif($f =~ /(300|302)/) {
+		elsif($f =~ /(300|302|jeff|geoff)/i) {
 		    $location = $1;
 		}
 		else {
