@@ -72,6 +72,15 @@ sub said
 	    push @teas, [$dt ,$tea, $location, $brewer];
 	    return "OK";
 	}
+	elsif ($msg =~ /^who is making tea\??$/i) {
+		my @brewers = map { $_->[3] } @teas;
+		local $" = ', ';
+		# poor man's set
+		my %s;
+		@s{@brewers} = 1;
+		@brewers = sort keys %s;
+		return "@brewers";
+	}
 	else {
 	    return "I don't understand. $helptext";
 	}
