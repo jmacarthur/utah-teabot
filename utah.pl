@@ -133,7 +133,7 @@ my $bot = TeaBot->new(
     name      => "Utah Teabot",
     ssl       => 1,
     port      => 6697,
-    ignore_list => [qw(dipsy dadadodo laotse)],
+    ignore_list => [qw(marvin medibot)],
 );
 $bot->{IRCNAME} = "utah";
 $bot->run();
