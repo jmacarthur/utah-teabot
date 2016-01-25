@@ -75,7 +75,7 @@ sub said
 	elsif ($msg =~ /^who is making tea\??$/i) {
 		local $" = ', ';
 		my @brewers = sort keys %{{map { $_->[3] => 1 } @teas}};
-		return "@brewers";
+		return scalar @brewers > 0 ? "@brewers" : 'No tea is brewing at present.';
 	}
 	else {
 	    return "I don't understand. $helptext";
