@@ -73,12 +73,8 @@ sub said
 	    return "OK";
 	}
 	elsif ($msg =~ /^who is making tea\??$/i) {
-		my @brewers = map { $_->[3] } @teas;
 		local $" = ', ';
-		# poor man's set
-		my %s;
-		@s{@brewers} = 1;
-		@brewers = sort keys %s;
+		my @brewers = sort keys %{{map { $_->[3] => 1 } @teas}};
 		return "@brewers";
 	}
 	else {
