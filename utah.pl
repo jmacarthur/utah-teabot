@@ -72,14 +72,10 @@ sub said
 	    push @teas, [$dt ,$tea, $location, $brewer];
 	    return "OK";
 	}
-	elsif ($msg =~ /^who is making tea\??$/i) {
-		my @brewers = map { $_->[3] } @teas;
+	elsif ($msg eq 'brewers' or $msg =~ /^who(( i)|')s (making|brewing)( tea)?\??$/i) {
 		local $" = ', ';
-		# poor man's set
-		my %s;
-		@s{@brewers} = 1;
-		@brewers = sort keys %s;
-		return "@brewers";
+		my @brewers = sort keys %{{map { $_->[3] => 1 } @teas}};
+		return scalar @brewers > 0 ? "@brewers" : 'No tea is brewing at present.';
 	}
 	else {
 	    return "I don't understand. $helptext";
