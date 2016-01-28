@@ -66,7 +66,7 @@ sub said
 	    my $dt = DateTime->now;
 	    $dt->add(minutes=>$delay);
 	    chomp($tea);
-	    if($tea =~ /^AF$/i || $tea =~ /arctic fire/i) {
+	    if($tea =~ /^AF/i || $tea =~ /arctic fire/i) {
 		$tea = "nasty fruit tea";
 	    }
 	    push @teas, [$dt ,$tea, $location, $brewer];
