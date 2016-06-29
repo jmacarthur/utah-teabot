@@ -44,7 +44,7 @@ sub said
 	elsif ($msg =~ /,/) {
 	    my @fields = split(/,/, $msg);
 	    my $location = "an unknown location";
-	    my $delay = 0;
+	    my $delay = -1;
 	    my $tea = "Mystery tea";
 	    my $brewer = $message->{'who'};
 	    for my $f(@fields) {
@@ -52,7 +52,7 @@ sub said
 		if($f =~ /(\d+)\s*(m|min|mins)/i) {
 		    $delay = $1;
 		}
-		elsif($f =~ /0m|now/i) {
+		elsif($f =~ /now/i) {
 		    $delay = 0;
 		}
 		elsif($f =~ /(300|302|101|jeff|geoff|sean|shaun)/i) {
@@ -62,7 +62,7 @@ sub said
 		    $tea = $f;
 		}
 	    }
-	    if($delay == 0) {
+	    if($delay == -1) {
 		return "Please tell me how many minutes you want to wait (e.g. 5m)"
 	    }
 	    print "$tea ready in $delay minutes in $location\n";
