@@ -96,7 +96,7 @@ sub tick
 	my $res = DateTime->compare($t->[0], DateTime->now());
 	print "Checking the $t->[1], which is ready at $t->[0]: $res\n";
 	if($res < 1) {
-	    while (my ($k,$v)  = each $config->{reportChans}) {
+	    while (my ($k,$v)  = each %{$config->{reportChans}}) {
 		if($v == 1) {
 		    my $tea = ucfirst($t->[1]);
 		    $self->say(channel => "#$k", body=>"$tea now ready in $t->[2]. Thanks $t->[3]!");
@@ -126,7 +126,7 @@ else {
 }
 
 my @chans = ();
-while (my ($k,$v)  = each $config->{reportChans}) {
+while (my ($k,$v)  = each %{$config->{reportChans}}) {
     if($v == 1) {
 	push @chans, "#$k";
     }
