@@ -9,14 +9,57 @@ package TeaBot;
 use base qw(Bot::BasicBot);
 
 my @teas = ();
+my @zara_reminders = ();
 my $config = {};
 my $helptext = 'Try: "utah: Earl grey, 300, 5 minutes"';
+my $time_regex = qr/(\d+)\s*(m|min|mins)/;
+
+my $missing_time_err = "Please tell me how many minutes you want to wait (e.g. 5m)";
+my $NASTY_FRUIT_TEA = "nasty fruit tea";
+my $ZARA_REMIND_PREFIX = "remind zara, ";
+
+my @tea_blacklist = ('AF', 'arctic fire');
+
 sub saveConfig()
 {
     $json_text   = JSON::encode_json( $config );
     open(my $fh, '>', "config.json");
     print $fh $json_text;
     close($fh);
+}
+
+sub is_approved_tea
+{
+	my $t = shift;
+	return (grep { /$t/i } @tea_blacklist) == 0;
+}
+
+sub parse_msg
+{
+    my $msg = shift;
+
+    my @fields = split(/,/, $msg);
+    my $location = "an unknown location";
+    my $delay = -1;
+    my $tea = "Mystery tea";
+
+    for my $f(@fields) {
+	chomp($f);
+	if($f =~ qr/$time_regex/i) {
+	    $delay = $1;
+	}
+	elsif($f =~ /now/i) {
+	    $delay = 0;
+	}
+	elsif($f =~ /(300|302|101|jeff|geoff|sean|shaun)/i) {
+	    $location = $1;
+	}
+	else {
+	    $tea = $f;
+	}
+    }
+
+    return ($tea, $location, $delay);
 }
 
 sub said
@@ -41,37 +84,43 @@ sub said
 	    @teas = ();
 	    return "OK, I have cancelled all tea notifications.";
 	}
+	elsif ($msg =~ /,/ and $msg =~ qr/^$ZARA_REMIND_PREFIX/i) {
+		# remind zara, make almond tea, 10m
+		# parse_fields
+		my ($tea, $location, $delay) = parse_msg(substr($msg, length($ZARA_REMIND_PREFIX)));
+
+		if ($delay == -1) {
+			return $missing_time_err;
+		}
+
+		my $dt = DateTime->now;
+		$dt->add(minutes=>$delay);
+		chomp($tea);
+
+		if (not is_approved_tea($tea)) {
+			$tea = $NASTY_FRUIT_TEA;
+		}
+
+		push @zara_reminders, [$dt, $tea, $location, 'Zara'];
+		return "OK";
+	}
 	elsif ($msg =~ /,/) {
-	    my @fields = split(/,/, $msg);
-	    my $location = "an unknown location";
-	    my $delay = -1;
-	    my $tea = "Mystery tea";
 	    my $brewer = $message->{'who'};
-	    for my $f(@fields) {
-		chomp($f);
-		if($f =~ /(\d+)\s*(m|min|mins)/i) {
-		    $delay = $1;
-		}
-		elsif($f =~ /now/i) {
-		    $delay = 0;
-		}
-		elsif($f =~ /(300|302|101|jeff|geoff|sean|shaun)/i) {
-		    $location = $1;
-		}
-		else {
-		    $tea = $f;
-		}
-	    }
+	    my ($tea, $location, $delay) = parse_msg($msg);
+
 	    if($delay == -1) {
-		return "Please tell me how many minutes you want to wait (e.g. 5m)"
+		return $missing_time_err;
 	    }
+
 	    print "$tea ready in $delay minutes in $location\n";
 	    my $dt = DateTime->now;
 	    $dt->add(minutes=>$delay);
 	    chomp($tea);
-	    if($tea =~ /^AF$/i || $tea =~ /arctic fire/i) {
-		$tea = "nasty fruit tea";
+
+	    if (not is_approved_tea($tea)) {
+	    	$tea = $NASTY_FRUIT_TEA;
 	    }
+
 	    push @teas, [$dt ,$tea, $location, $brewer];
 	    return "OK";
 	}
@@ -106,7 +155,23 @@ sub tick
 	    push @newTeas, $t;
 	}
     }
+    for my $zr (@zara_reminders) {
+	my ($dt, $tea, $location, $brewer) = @$zr;
+
+    	my $res = DateTime->compare($dt, DateTime->now());
+    	print "ZARA REMINDER: Checking the reminder for $tea: $res\n";
+    	if ($res < 1) {
+    		while (my ($k, $v) = each %{$config->{reportChans}}) {
+    			if ($v == 1) {
+    				$self->say(channel => "Zara", body=>"Zara reminder: $tea ($location)");
+    			}
+    		}
+    	} else {
+    		push @new_zara_reminders, $zr;
+    	}
+    }
     @teas = @newTeas;
+    @zara_reminders = @new_zara_reminders;
     return 5;
 }
 
