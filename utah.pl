@@ -3,7 +3,8 @@
 use Data::Dumper;
 use DateTime;
 use JSON;
-# To use this you need to do stuff with your package manager and all that
+# To use this you need: apt-get install libbot-basicbot-perl libpoe-component-sslify-perl libjson-perl libdatetime-perl
+# Instructions on other distributions may vary!
 
 package TeaBot;
 use base qw(Bot::BasicBot);
