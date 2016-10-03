@@ -87,6 +87,14 @@ sub said
     return undef;
 }
 
+sub report
+{
+	my ($self, $who, $tea, $location, $benefactor) = @_;
+
+	$self->say(channel => $who,
+			   body=> "$tea now ready in $location. Thanks $benefactor!");
+}
+
 sub tick
 {
     my ($self) = @_;
@@ -96,12 +104,16 @@ sub tick
 	my $res = DateTime->compare($t->[0], DateTime->now());
 	print "Checking the $t->[1], which is ready at $t->[0]: $res\n";
 	if($res < 1) {
-	    while (my ($k,$v)  = each %{$config->{reportChans}}) {
-		if($v == 1) {
-		    my $tea = ucfirst($t->[1]);
-		    $self->say(channel => "#$k", body=>"$tea now ready in $t->[2]. Thanks $t->[3]!");
+		my ($dt, $tea, $location, $benefactor) = @$t;
+
+		while (my ($k,$v)  = each %{$config->{reportChans}}) {
+			$self->report("#$k", $tea, $location, $benefactor) if $v;
 		}
-	    }
+
+		while (my ($k,$v)  = each %{$config->{reportPeople}}) {
+			$self->report("$k", $tea, $location, $benefactor) if $v;
+		}
+
 	} else {
 	    push @newTeas, $t;
 	}
