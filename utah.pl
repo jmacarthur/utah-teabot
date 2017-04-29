@@ -27,7 +27,7 @@ sub said
 	my $msg = $message->{'body'};
 	chomp($msg);
 	if (lc($msg) eq "quit") {
-	    $self->shutdown( "kbai");
+	    $self->shutdown( "Leaving as requested.");
 	}
 	elsif ($msg =~ /^report to #(\S+)/i) {
 	    $config->{reportChans}->{$1} = 1;
@@ -40,6 +40,9 @@ sub said
 	elsif ($msg =~ /^cancel/i) {
 	    @teas = ();
 	    return "OK, I have cancelled all tea notifications.";
+	}
+	elsif ($msg =~ /^(thanks|thank you|ta)$/i) {
+	    return "You're welcome.";
 	}
 	elsif ($msg =~ /,/) {
 	    my @fields = split(/,/, $msg);
