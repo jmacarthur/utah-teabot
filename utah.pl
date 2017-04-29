@@ -45,10 +45,13 @@ sub said
 	    my @fields = split(/,/, $msg);
 	    my $location = "an unknown location";
 	    my $delay = -1;
-	    my @tea = ("Mystery tea");
+	    my @tea = ();
 	    my $brewer = $message->{'who'};
 	    for my $f(@fields) {
+                print "Processing field '$f'\n";
 		chomp($f);
+                $f =~ s/^\s+|\s+$//g; # Trim whitespace
+                next if $f eq '';
 		if($f =~ /(\d+)\s*(m|min|mins)/i) {
 		    $delay = $1;
 		}
@@ -56,15 +59,20 @@ sub said
 		    $delay = 0;
 		}
 		elsif($f =~ /(300|302|101|jeff|geoff|sean|shaun)/i) {
+                    print "Treating as a location.\n";
 		    $location = $1;
 		}
 		else {
+                    print "Treating as tea type.\n";
 		    push @tea, $f;
 		}
 	    }
 	    if($delay == -1) {
 		return "Please tell me how many minutes you want to wait (e.g. 5m)"
 	    }
+            if (!@tea) {
+                @tea = ('Mystery tea');
+            }
 	    my $tea = join(", ", @tea);
 	    print "$tea ready in $delay minutes in $location\n";
 	    my $dt = DateTime->now;
