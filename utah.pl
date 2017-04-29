@@ -45,7 +45,7 @@ sub said
 	    my @fields = split(/,/, $msg);
 	    my $location = "an unknown location";
 	    my $delay = -1;
-	    my $tea = "Mystery tea";
+	    my @tea = ("Mystery tea");
 	    my $brewer = $message->{'who'};
 	    for my $f(@fields) {
 		chomp($f);
@@ -59,12 +59,13 @@ sub said
 		    $location = $1;
 		}
 		else {
-		    $tea = $f;
+		    push @tea, $f;
 		}
 	    }
 	    if($delay == -1) {
 		return "Please tell me how many minutes you want to wait (e.g. 5m)"
 	    }
+	    my $tea = join(", ", @tea);
 	    print "$tea ready in $delay minutes in $location\n";
 	    my $dt = DateTime->now;
 	    $dt->add(minutes=>$delay);
