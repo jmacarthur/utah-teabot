@@ -85,7 +85,7 @@ sub said
                 @tea = ('Mystery tea');
             }
 	    my $tea = join(", ", @tea);
-	    print "$tea ready in $delay minutes in $location\n";
+	    print "$tea ready in $delay minutes $location\n";
 	    my $dt = DateTime->now;
 	    $dt->add(minutes=>$delay);
 	    chomp($tea);
@@ -119,7 +119,7 @@ sub tick
 	    while (my ($k,$v)  = each %{$config->{reportChans}}) {
 		if($v == 1) {
 		    my $tea = ucfirst($t->[1]);
-		    $self->say(channel => "#$k", body=>"$tea now ready in $t->[2]. Thanks $t->[3]!");
+		    $self->say(channel => "#$k", body=>"$tea now ready $t->[2]. Thanks $t->[3]!");
 		}
 	    }
 	} else {
