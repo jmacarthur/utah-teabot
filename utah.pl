@@ -10,7 +10,7 @@ use base qw(Bot::BasicBot);
 
 my @teas = ();
 my $config = {};
-my $helptext = 'Try: "utah: Earl grey, 300, 5 minutes"';
+my $helptext = 'Try: "utah: Earl grey, downstairs, 5 minutes"';
 sub saveConfig()
 {
     $json_text   = JSON::encode_json( $config );
@@ -61,9 +61,17 @@ sub said
 		elsif($f =~ /now/i) {
 		    $delay = 0;
 		}
-		elsif($f =~ /(300|302|101|jeff|geoff|sean|shaun)/i) {
-                    print "Treating as a location.\n";
+		elsif($f =~ /(upstairs|downstairs)/i) {
+                    print "Treating as a location (type 1).\n";
 		    $location = $1;
+		}
+		elsif($f =~ /(3rd|4th)/i) {
+                    print "Treating as a location (type 2).\n";
+		    $location = "on $1";
+		}
+		elsif($f =~ /break room/i) {
+                    print "Treating as a location (type 3).\n";
+		    $location = "in $1";
 		}
 		else {
                     print "Treating as tea type.\n";
