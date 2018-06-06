@@ -69,7 +69,7 @@ sub said
                     print "Treating as a location (type 2).\n";
 		    $location = "on $1";
 		}
-		elsif($f =~ /break room/i) {
+		elsif($f =~ /(break room)/i) {
                     print "Treating as a location (type 3).\n";
 		    $location = "in $1";
 		}
