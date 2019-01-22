@@ -46,7 +46,7 @@ sub said
 	}
 	elsif ($msg =~ /,/) {
 	    my @fields = split(/,/, $msg);
-	    my $location = "an unknown location";
+	    my $location = "in an unknown location";
 	    my $delay = -1;
 	    my @tea = ();
 	    my $brewer = $message->{'who'};
@@ -69,7 +69,7 @@ sub said
                     print "Treating as a location (type 2).\n";
 		    $location = "on $1";
 		}
-		elsif($f =~ /(break room)/i) {
+		elsif($f =~ /(break room|breakroom)/i) {
                     print "Treating as a location (type 3).\n";
 		    $location = "in $1";
 		}
